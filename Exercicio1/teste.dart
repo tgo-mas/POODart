@@ -2,13 +2,7 @@ class Produto {
   double preco;
   String desc;
   DateTime validade;
-  bool isValido() {
-    if (DateTime.now().toUtc().isBefore(validade)) {
-      return true;
-    } else {
-      return false;
-    }
-  }
+  bool isValido() => DateTime.now().toUtc().isBefore(validade) ? true : false;
 
   Produto(this.preco, this.desc, this.validade);
 }
