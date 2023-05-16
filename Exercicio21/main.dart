@@ -2,40 +2,46 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
 class DataService {
-  final ValueNotifier<List> tableStateNotifier = new ValueNotifier([]);
+  final ValueNotifier<Map> tableStateNotifier =
+      new ValueNotifier({"dados": [], "colunas": []});
 
   void carregar(index) {
-    var callbacks = [
-      carregarCafes,
-      carregarCervejas,
-      carregarNacoes
-    ];
+    var callbacks = [carregarCafes, carregarCervejas, carregarNacoes];
 
     callbacks[index]();
   }
 
   void carregarCervejas() {
-    tableStateNotifier.value = [
-      {"name": "La Fin Du Monde", "style": "Bock", "ibu": "65"},
-      {"name": "Sapporo Premiume", "style": "Sour Ale", "ibu": "54"},
-      {"name": "Duvel", "style": "Pilsner", "ibu": "82"}
-    ];
+    tableStateNotifier.value = {
+      "dados": [
+        {"name": "La Fin Du Monde", "style": "Bock", "ibu": "65"},
+        {"name": "Sapporo Premiume", "style": "Sour Ale", "ibu": "54"},
+        {"name": "Duvel", "style": "Pilsner", "ibu": "82"}
+      ],
+      "colunas": ["Nome", "Estilo", "IBU"]
+    };
   }
 
   void carregarCafes() {
-    tableStateNotifier.value = [
-      {"name": "Icla", "style": "Forte", "ibu": "65"},
-      {"name": "Santa Clara", "style": "Amargo", "ibu": "54"},
-      {"name": "São Braz", "style": "Concentrado", "ibu": "82"}
-    ];
+    tableStateNotifier.value = {
+      "dados": [
+        {"name": "Icla", "style": "Forte", "ibu": "65"},
+        {"name": "Santa Clara", "style": "Amargo", "ibu": "54"},
+        {"name": "São Braz", "style": "Concentrado", "ibu": "82"}
+      ],
+      "colunas": ["Nome", "Intensidade", "Nota"]
+    };
   }
 
   void carregarNacoes() {
-    tableStateNotifier.value = [
-      {"name": "Brazil", "style": "South America", "ibu": "65"},
-      {"name": "Angola", "style": "Africa", "ibu": "54"},
-      {"name": "Moçambique", "style": "Central America", "ibu": "82"}
-    ];
+    tableStateNotifier.value = {
+      "dados": [
+        {"name": "Brazil", "style": "South America", "ibu": "65"},
+        {"name": "Angola", "style": "Africa", "ibu": "54"},
+        {"name": "Moçambique", "style": "Central America", "ibu": "82"}
+      ],
+      "colunas": ["Nome", "Continente", "IDH"]
+    };
   }
 }
 
@@ -60,12 +66,14 @@ class MyApp extends StatelessWidget {
           body: ValueListenableBuilder(
               valueListenable: dataService.tableStateNotifier,
               builder: (_, value, __) {
+                const properties = <String>["name", "style", "ibu"]; //Erro ao iniciar o projeto, mas some ao clicar na navbar
                 return DataTableWidget(
-                    jsonObjects: value,
-                    propertyNames: ["name", "style", "ibu"],
-                    columnNames: ["Nome", "Estilo", "IBU"]);
+                    jsonObjects: value["dados"],
+                    propertyNames: properties,
+                    columnNames: value["colunas"]);
               }),
-          bottomNavigationBar: NewNavBar(itemSelectedCallback: dataService.carregar),
+          bottomNavigationBar:
+              NewNavBar(itemSelectedCallback: dataService.carregar),
         ));
   }
 }
@@ -106,7 +114,7 @@ class DataTableWidget extends StatelessWidget {
 
   final List<String> columnNames;
 
-  final List<String> propertyNames;
+  final List propertyNames;
 
   DataTableWidget(
       {this.jsonObjects = const [],
